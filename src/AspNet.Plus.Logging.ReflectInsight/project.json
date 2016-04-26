@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0-rc1-100",
+  "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
+  "copyright": "Copyright 2016, ZoneMatrix",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "projectUrl": "https://github.com/aspnet-plus/AspNet.Plus.Logging",
+  "iconUrl": "http://avatars2.githubusercontent.com/u/16177606",
+  "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core.",
+  "requireLicenseAcceptance": true,
+  "owners": [
+    "ZoneMatrix"
+  ],
+  "authors": [
+    "codematrix"
+  ],
+  "tags": [
+    "DNX",
+    "ASP.NET",
+    "Logging",
+    "ReflectSoftware",
+    "ReflectInsight",
+    "WebAPI",
+    "Mvc"
+  ],
+  "compilationOptions": {
+    "warningsAsErrors": true,
+    "keyFile": "../../key.snk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
+  },
+  "dependencies": {
+    "ReflectSoftware.Insight": "5.5.2",
+    "Microsoft.Extensions.Logging": "1.0.0-rc1-final"
+  },
+  "frameworks": {
+    "net451": { }    
+  }
+}
+
+
