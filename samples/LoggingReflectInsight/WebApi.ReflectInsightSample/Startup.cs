@@ -21,13 +21,26 @@ namespace WebApi.ReflectInsightSample
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
+                .AddJsonFile("logging.json")                
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
+            Configuration.ReloadOnChanged("logging.json");
         }
 
+        /// <summary>
+        /// Gets or sets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
         public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configures the services.
+        /// </summary>
+        /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
@@ -35,16 +48,26 @@ namespace WebApi.ReflectInsightSample
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configures the specified application.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="env">The env.</param>
+        /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddReflectInsight();
-            loggerFactory.MinimumLevel = LogLevel.Debug;
+            //loggerFactory.MinimumLevel = LogLevel.Debug;
 
             app.UseIISPlatformHandler();
             app.UseMvc();
         }
 
         // Entry point for the application.
+        /// <summary>
+        /// Mains the specified arguments.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

@@ -22,6 +22,7 @@ namespace WebApi.ReflectInsightSample.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
+            _logger.LogDebug("Received Get");
             _logger.LogWarning("Received Get");
             return new string[] { "value1", "value2" };
         }
