@@ -9,6 +9,8 @@
 
 A set of Nuget packages to help ASP.NET 5 developers build simple quality logging related code.
 
+**NOTE**: *The AspNet.Plus.Logging.ReflectInsight does not support DNX Core, Yet!*
+
 ### Helpful Links
 
 * [Getting Started](https://github.com/aspnet-plus/Home/blob/master/README.md)
