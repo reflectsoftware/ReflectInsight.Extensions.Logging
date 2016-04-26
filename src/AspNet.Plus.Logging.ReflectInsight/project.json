@@ -35,7 +35,7 @@
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final"
   },
   "frameworks": {
-    "net451": { }    
+    "dnx451": { }
   }
 }
 
