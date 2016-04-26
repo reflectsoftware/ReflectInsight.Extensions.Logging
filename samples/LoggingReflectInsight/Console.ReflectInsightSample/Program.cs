@@ -19,13 +19,13 @@ namespace Console.ReflectInsightSample
                 //.AddXmlFile("ReflectInsight.config")
                 .Build();
 
-            _factory = new LoggerFactory();
+            //_factory = new LoggerFactory();
             //_factory.AddReflectInsight();
 
-            var logger = _factory.CreateLogger<Program>();
+            //var logger = _factory.CreateLogger<Program>();
 
-            logger.LogDebug("Debug");
-            logger.LogWarning("Warning");
+            //logger.LogDebug("Debug");
+            //logger.LogWarning("Warning");
         }
     }
 }
