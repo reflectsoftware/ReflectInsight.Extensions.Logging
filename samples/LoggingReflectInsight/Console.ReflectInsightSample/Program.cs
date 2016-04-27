@@ -1,5 +1,4 @@
-﻿//using AspNet.Plus.Logging.ReflectInsight;
-using Microsoft.Extensions.Configuration;
+﻿using AspNet.Plus.Logging.ReflectInsight;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,22 +9,22 @@ namespace Console.ReflectInsightSample
 {
     public class Program
     {
-        private static LoggerFactory _factory;
-        private static IConfigurationRoot _loggingConfiguration;
+        private static LoggerFactory _factory;        
 
         public static void Main(string[] args)
-        {            
-            _loggingConfiguration = new ConfigurationBuilder()
-                //.AddXmlFile("ReflectInsight.config")
-                .Build();
+        {
+            _factory = new LoggerFactory();
+            _factory.MinimumLevel = LogLevel.Debug;
 
-            //_factory = new LoggerFactory();
-            //_factory.AddReflectInsight();
+            _factory.AddReflectInsight();
 
-            //var logger = _factory.CreateLogger<Program>();
+            var logger = _factory.CreateLogger<Program>();
 
-            //logger.LogDebug("Debug");
-            //logger.LogWarning("Warning");
+            logger.LogDebug("Debug");
+            logger.LogWarning("Warning");
+
+            System.Console.WriteLine("Pres any key to terminate...");
+            System.Console.ReadKey();            
         }
     }
 }
