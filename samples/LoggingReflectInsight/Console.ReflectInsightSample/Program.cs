@@ -13,10 +13,14 @@ namespace Console.ReflectInsightSample
 
         public static void Main(string[] args)
         {
-            _factory = new LoggerFactory();
-            _factory.MinimumLevel = LogLevel.Debug;
-
+            _factory = new LoggerFactory();            
             _factory.AddReflectInsight();
+
+            var xxx = ReflectSoftware.Insight.RIListenerGroupManager.Add("");
+            xxx.AddDestination("", "details", true, new ReflectSoftware.Insight.FilterInfo("", ReflectSoftware.Insight.FilterMode.Include) {
+            });
+                       
+            // ReflectSoftware.Insight.ReflectInsightConfig.Settings.
 
             var logger = _factory.CreateLogger<Program>();
 

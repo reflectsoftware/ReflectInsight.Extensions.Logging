@@ -1,7 +1,7 @@
 ﻿{
   "version": "1.0.0-*",
 
-  "dependencies": {        
+  "dependencies": {            
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
     "AspNet.Plus.Logging.ReflectInsight":  "1.0.0-*"
   },
@@ -12,7 +12,7 @@
 
   "frameworks": {
     "dnx451": {
-      "dependencies": {
+      "dependencies": {        
       }
     }
   }

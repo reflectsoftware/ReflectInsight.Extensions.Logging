@@ -1,0 +1,119 @@
+﻿{
+  "baseSettings": {
+    "propagateException.enable": false,
+    "exceptionEventTracker.time": 5,
+    "sender.name": "Console.ReflectInsightSample"
+  },
+
+  "files": {
+    "default": "Weekly",
+    "autoSaves": [
+      {
+        "name": "Weekly",
+        "onNewDay": false,
+        "onMsgLimit": 100000,
+        "recycleFilesEvery": 7,
+        "onSize": 0
+      },
+      {
+        "name": "Daily",
+        "onNewDay": true,
+        "onMsgLimit": 100000,
+        "recycleFilesEvery": 1,
+        "onSize": 0
+      }
+    ]
+  },
+
+  "messagePatterns": [
+    {
+      "name": "pattern1",
+      "pattern": "[%time{yyyyMMdd, HH:mm:ss.fff}%] - %message% - [%messagetype%]"
+    },
+    {
+      "name": "pattern2",
+      "pattern": "%time{T1 hh:mm:ss.fff}% - %utctime{T2 HH:mm:ss.fff}% - %time{T3 yyyy-MM-dd, hh:mm:ss.fff}% - %utctime{T4 dd, HH:mm:ss.fff}% %message%"
+    }
+  ],
+
+  "listenerGroups": {
+    "active": "Development",
+    "groups": [
+      {
+        "name": "Development",
+        "enabled": true,
+        "destinations": [
+          {
+            "name": "Viewer",
+            "enabled": true,
+            "filter": "Level_Trace",
+            "details": "Viewer"
+          },
+          {
+            "name": "BinaryFile",
+            "enabled": true,
+            "filter": "Level_Trace",
+            "details": "BinaryFile[path=$(workingdir)\\Logs\\Sample.rlg; autoSave=Weekly]"
+          },
+          {
+            "name": "TextFile",
+            "enabled": true,
+            "filter": "Level_Trace",
+            "details": "TextFile[path=$(workingdir)\\Logs\\Sample.txt; messageDetails=Message; messagePattern=pattern1; autoSave=Weekly]"
+          }
+        ]
+      },
+      {
+        "name": "Release",
+        "enabled": true,
+        "destinations": [
+          {
+            "name": "Viewer",
+            "enabled": true,
+            "filter": "Level_Trace",
+            "details": "Viewer"
+          },
+          {
+            "name": "BinaryFile",
+            "enabled": true,
+            "filter": "Level_Trace",
+            "details": "BinaryFile[path=$(workingdir)\\Logs\\Sample.rlg; autoSave=Weekly]"
+          }
+        ]
+      }
+    ]
+  },
+
+  "filters": [
+    {
+      "name": "Level_Trace",
+      "mode": "Include",
+      "filter": [ "SendTrace", "SendDebug", "SendInformation", "SendWarning", "SendError", "SendException", "SendFatal" ]
+    },
+    {
+      "name": "Level_Debug",
+      "mode": "Include",
+      "filter": [ "SendDebug", "SendInformation", "SendWarning", "SendError", "SendException", "SendFatal" ]
+    },
+    {
+      "name": "Level_Info",
+      "mode": "Include",
+      "filter": [ "SendInformation", "SendWarning", "SendError", "SendException", "SendFatal" ]
+    },
+    {
+      "name": "Level_Warn",
+      "mode": "Include",
+      "filter": [ "SendWarning", "SendError", "SendException", "SendFatal" ]
+    },
+    {
+      "name": "Level_Error",
+      "mode": "Include",
+      "filter": [ "SendError", "SendException", "SendFatal" ]
+    },
+    {
+      "name": "Level_Critical",
+      "mode": "Include",
+      "filter": [ "SendException", "SendFatal" ]
+    }
+  ]
+}
