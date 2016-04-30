@@ -9,10 +9,17 @@ using System.Collections.Generic;
 
 namespace Console.ReflectInsightSample
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Program
     {
         private static LoggerFactory _factory;
 
+        /// <summary>
+        /// Mains the specified arguments.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
             _factory = new LoggerFactory();
