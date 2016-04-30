@@ -35,7 +35,12 @@
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final"
   },
   "frameworks": {
-    "dnx451": { }
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.XmL": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0"
+      }
+    }
   }
 }
 

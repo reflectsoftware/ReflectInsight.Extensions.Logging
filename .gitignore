@@ -29,3 +29,4 @@ node_modules
 project.lock.json
 .vs/
 *.dat
+Logs/

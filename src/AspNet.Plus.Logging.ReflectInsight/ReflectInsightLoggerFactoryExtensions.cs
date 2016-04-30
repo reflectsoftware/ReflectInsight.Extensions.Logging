@@ -15,8 +15,9 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// Adds the reflect insight.
         /// </summary>
         /// <param name="factory">The factory.</param>
+        /// <param name="configFile">The configuration file.</param>
         /// <returns></returns>
-        public static ILoggerFactory AddReflectInsight(this ILoggerFactory factory)
+        public static ILoggerFactory AddReflectInsight(this ILoggerFactory factory, string configFile = "ReflectInsight.config")
         {
             factory.AddProvider(new ReflectInsightLoggerProvider());
             return factory;

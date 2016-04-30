@@ -7,6 +7,7 @@ using ReflectSoftware.Insight;
 using ReflectSoftware.Insight.Common;
 using RI.Utils.ExceptionManagement;
 using System;
+using System.Collections.Specialized;
 
 namespace AspNet.Plus.Logging.ReflectInsight
 {
@@ -69,7 +70,7 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// <exception cref="System.ArgumentNullException"></exception>
         public void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel) || logLevel == LogLevel.None)
+            if (!IsEnabled(logLevel)) // || logLevel == LogLevel.None)
             {
                 return;
             }
@@ -117,7 +118,28 @@ namespace AspNet.Plus.Logging.ReflectInsight
             var details = (string)null;
             if (exception != null)
             {
-                details = ExceptionBasePublisher.ConstructIndentedMessage(exception);
+                NameValueCollection additional = null;
+                if(eventId > 0)
+                {
+                    additional = new NameValueCollection();
+                    additional["eventId"] = eventId.ToString();
+                }
+
+                if (state is ILogValues)
+                {
+                    additional = additional ?? new NameValueCollection();
+
+                    var logValues = (state as ILogValues);
+                    foreach(var keyValue in logValues.GetValues())
+                    {
+                        if (keyValue.Key != "{OriginalFormat}")
+                        {
+                            additional[keyValue.Key] = keyValue.Value?.ToString();
+                        }
+                    }
+                }
+
+                details = ExceptionBasePublisher.ConstructIndentedMessage(exception, additional);
             }
 
             RILogManager.Get(_name).Send(methodType, message, details);
