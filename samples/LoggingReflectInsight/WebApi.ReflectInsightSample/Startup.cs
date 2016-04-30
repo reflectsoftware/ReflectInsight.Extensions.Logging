@@ -16,16 +16,18 @@ namespace WebApi.ReflectInsightSample
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="env">The env.</param>
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+            var builder = new ConfigurationBuilder()                
                 .AddJsonFile("logging.json")                
                 .AddEnvironmentVariables();
 
-            Configuration = builder.Build();
-            Configuration.ReloadOnChanged("logging.json");
+            Configuration = builder.Build();            
         }
 
         /// <summary>
@@ -56,8 +58,8 @@ namespace WebApi.ReflectInsightSample
         /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddReflectInsight();
-            //loggerFactory.MinimumLevel = LogLevel.Debug;
+            loggerFactory.MinimumLevel = LogLevel.Debug;
+            loggerFactory.AddReflectInsight("ReflectInsight");
 
             app.UseIISPlatformHandler();
             app.UseMvc();
