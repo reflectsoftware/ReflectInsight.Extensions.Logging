@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-rc1-100",
+  "version": "1.0.0-0",
   "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
   "copyright": "Copyright 2016, ZoneMatrix",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "ReflectSoftware.Insight": "5.6.0-rc1"
+    "ReflectSoftware.Insight": "5.6.0"
   },
   "frameworks": {
     "dnx451": {
