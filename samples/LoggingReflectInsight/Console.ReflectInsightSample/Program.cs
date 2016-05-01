@@ -14,19 +14,16 @@ namespace Console.ReflectInsightSample
     /// </summary>
     public class Program
     {
-        private static LoggerFactory _factory;
-
-        /// <summary>
         /// Mains the specified arguments.
         /// </summary>
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
-            _factory = new LoggerFactory();
-            _factory.MinimumLevel = LogLevel.Debug;
-            _factory.AddReflectInsight();
+            var loggerFactory = new LoggerFactory();
+            loggerFactory.MinimumLevel = LogLevel.Debug;
+            loggerFactory.AddReflectInsight();
             
-            var logger = _factory.CreateLogger<Program>();
+            var logger = loggerFactory.CreateLogger<Program>();
             
             var exception = new Exception("Some Exception...");
             var logValues = new Dictionary<string, object>();
@@ -36,26 +33,32 @@ namespace Console.ReflectInsightSample
 
             logger.LogDebug("LogDebug");
             logger.LogDebug("LogDebug", exception);
+            logger.LogDebug(logValues, "LogDebug", exception);
             logger.LogDebug(logValues, exception);
 
             logger.LogVerbose("LogVerbose");
             logger.LogVerbose("LogVerbose", exception);
+            logger.LogVerbose(logValues, "LogVerbose", exception);
             logger.LogVerbose(logValues, exception);
 
             logger.LogInformation("LogInformation");
             logger.LogInformation("LogInformation", exception);
+            logger.LogInformation(logValues, "LogInformation", exception);
             logger.LogInformation(logValues, exception);
             
             logger.LogWarning("LogWarning");
             logger.LogWarning("LogWarning", exception);
+            logger.LogWarning(logValues, "LogWarning", exception);
             logger.LogWarning(logValues, exception);
             
             logger.LogError("LogError");
             logger.LogError("LogError", exception);
+            logger.LogError(logValues, "LogError", exception);
             logger.LogError(logValues, exception);
 
             logger.LogCritical("LogCritical");
             logger.LogCritical("LogCritical", exception);
+            logger.LogCritical(logValues, "LogCritical", exception);
             logger.LogCritical(logValues, exception);
 
             System.Console.WriteLine("Press any key to continue...");

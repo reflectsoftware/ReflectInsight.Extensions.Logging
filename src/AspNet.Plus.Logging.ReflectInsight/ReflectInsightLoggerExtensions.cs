@@ -55,6 +55,20 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// Logs the debug.
         /// </summary>
         /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogDebug(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogDebug(new ReflectInsightLogValues(values, message), ex);
+            return logger;
+        }
+
+        /// <summary>
+        /// Logs the debug.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="message">The message.</param>
         /// <param name="ex">The ex.</param>
@@ -92,6 +106,20 @@ namespace AspNet.Plus.Logging.ReflectInsight
         public static ILogger LogVerbose(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, Exception ex)
         {
             logger.LogVerbose(new ReflectInsightLogValues(values, ex.Message), ex);
+            return logger;
+        }
+
+        /// <summary>
+        /// Logs the verbose.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogVerbose(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogVerbose(new ReflectInsightLogValues(values, message), ex);
             return logger;
         }
 
@@ -143,6 +171,20 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// Logs the information.
         /// </summary>
         /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogInformation(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogInformation(new ReflectInsightLogValues(values, message), ex);
+            return logger;
+        }
+
+        /// <summary>
+        /// Logs the information.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="message">The message.</param>
         /// <param name="ex">The ex.</param>
@@ -183,6 +225,19 @@ namespace AspNet.Plus.Logging.ReflectInsight
             return logger;
         }
 
+        /// <summary>
+        /// Logs the warning.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogWarning(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogWarning(new ReflectInsightLogValues(values, message), ex);
+            return logger;
+        }
 
         //------------------------------- ERROR ----------------------------------------//
 
@@ -199,6 +254,19 @@ namespace AspNet.Plus.Logging.ReflectInsight
             return logger;
         }
 
+        /// <summary>
+        /// Logs the error.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogError(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogError(new ReflectInsightLogValues(values, message), ex);
+            return logger;
+        }
 
         //------------------------------- CRITICAL ----------------------------------------//
 
@@ -215,5 +283,18 @@ namespace AspNet.Plus.Logging.ReflectInsight
             return logger;
         }
 
+        /// <summary>
+        /// Logs the critical.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <returns></returns>
+        public static ILogger LogCritical(this ILogger logger, IEnumerable<KeyValuePair<string, object>> values, string message, Exception ex)
+        {
+            logger.LogCritical(new ReflectInsightLogValues(values, message), ex);
+            return logger;
+        }
     }
 }

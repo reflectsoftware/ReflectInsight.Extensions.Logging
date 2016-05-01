@@ -8,6 +8,8 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace WebApi.ReflectInsightSample
 {
@@ -63,6 +65,38 @@ namespace WebApi.ReflectInsightSample
 
             app.UseIISPlatformHandler();
             app.UseMvc();
+
+            var logger = loggerFactory.CreateLogger<Startup>();
+
+            var exception = new Exception("Some Exception...");
+            var logValues = new Dictionary<string, object>();
+            logValues["key1"] = "value1";
+            logValues["key2"] = "value2";
+            logValues["key3"] = new { Name = "John", Age = 100 };
+
+            logger.LogDebug("LogDebug");
+            logger.LogDebug("LogDebug", exception);
+            logger.LogDebug(logValues, exception);
+
+            logger.LogVerbose("LogVerbose");
+            logger.LogVerbose("LogVerbose", exception);
+            logger.LogVerbose(logValues, exception);
+
+            logger.LogInformation("LogInformation");
+            logger.LogInformation("LogInformation", exception);
+            logger.LogInformation(logValues, exception);
+
+            logger.LogWarning("LogWarning");
+            logger.LogWarning("LogWarning", exception);
+            logger.LogWarning(logValues, exception);
+
+            logger.LogError("LogError");
+            logger.LogError("LogError", exception);
+            logger.LogError(logValues, exception);
+
+            logger.LogCritical("LogCritical");
+            logger.LogCritical("LogCritical", exception);
+            logger.LogCritical(logValues, exception);
         }
 
         // Entry point for the application.

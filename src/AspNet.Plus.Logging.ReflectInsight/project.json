@@ -31,8 +31,8 @@
     "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
   },
   "dependencies": {
-    "ReflectSoftware.Insight": "5.5.2",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final"
+    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+    "ReflectSoftware.Insight": "5.6.0-rc1"
   },
   "frameworks": {
     "dnx451": {
