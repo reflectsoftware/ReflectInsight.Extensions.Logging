@@ -25,7 +25,7 @@
     ],
     "repository": {
       "type": "git",
-      "url": "git://github.com/aspnet-plus/aspnet.plus.logging" 
+      "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
     }
   },
   "buildOptions": {
