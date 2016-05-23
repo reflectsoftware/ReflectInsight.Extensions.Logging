@@ -3,8 +3,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
 using AspNet.Plus.Logging.ReflectInsight;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,12 +24,13 @@ namespace WebApi.ReflectInsightSample
         /// <param name="env">The env.</param>
         public Startup(IHostingEnvironment env)
         {
-            // Set up configuration sources.
-            var builder = new ConfigurationBuilder()                
-                .AddJsonFile("logging.json")                
-                .AddEnvironmentVariables();
+            var builder = new ConfigurationBuilder()
+                          .SetBasePath(env.ContentRootPath)
+                          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            Configuration = builder.Build();            
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         /// <summary>
@@ -56,60 +57,34 @@ namespace WebApi.ReflectInsightSample
         /// Configures the specified application.
         /// </summary>
         /// <param name="app">The application.</param>
-        /// <param name="env">The env.</param>
         /// <param name="loggerFactory">The logger factory.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.MinimumLevel = LogLevel.Debug;
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {            
             loggerFactory.AddReflectInsight("ReflectInsight");
-
-            app.UseIISPlatformHandler();
+            
             app.UseMvc();
 
+            var exception = new Exception("Some exception");
             var logger = loggerFactory.CreateLogger<Startup>();
 
-            var exception = new Exception("Some Exception...");
-            var logValues = new Dictionary<string, object>();
-            logValues["key1"] = "value1";
-            logValues["key2"] = "value2";
-            logValues["key3"] = new { Name = "John", Age = 100 };
-
             logger.LogDebug("LogDebug");
-            logger.LogDebug("LogDebug", exception);
-            logger.LogDebug(logValues, "LogDebug", exception);
-            logger.LogDebug(logValues, exception);
-
-            logger.LogVerbose("LogVerbose");
-            logger.LogVerbose("LogVerbose", exception);
-            logger.LogVerbose(logValues, "LogVerbose", exception);
-            logger.LogVerbose(logValues, exception);
-
+            logger.LogTrace("LogTrace");
+            
             logger.LogInformation("LogInformation");
-            logger.LogInformation("LogInformation", exception);
-            logger.LogInformation(logValues, "LogInformation", exception);
-            logger.LogInformation(logValues, exception);
-
+            logger.LogInformation(exception, "LogInformation with exception");
+            logger.LogInformation(exception);
+            
             logger.LogWarning("LogWarning");
-            logger.LogWarning("LogWarning", exception);
-            logger.LogWarning(logValues, "LogWarning", exception);
-            logger.LogWarning(logValues, exception);
-
+            logger.LogWarning(exception, "LogWarning with exception");
+            logger.LogWarning(exception);
+            
             logger.LogError("LogError");
-            logger.LogError("LogError", exception);
-            logger.LogError(logValues, "LogError", exception);
-            logger.LogError(logValues, exception);
-
+            logger.LogError(exception, "LogError with exception");
+            logger.LogError(exception);
+            
             logger.LogCritical("LogCritical");
-            logger.LogCritical("LogCritical", exception);
-            logger.LogCritical(logValues, "LogCritical", exception);
-            logger.LogCritical(logValues, exception);
+            logger.LogCritical(exception, "LogCritical with exception");
+            logger.LogCritical(exception);
         }
-
-        // Entry point for the application.
-        /// <summary>
-        /// Mains the specified arguments.
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

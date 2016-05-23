@@ -1,127 +1,82 @@
 ########################
-# FUNCTIONS
+# THE BUILD!
 ########################
-function Install-Dnvm
+Push-Location $PSScriptRoot
+
+function Invoke-DotNetBuild
 {
-    & where.exe dnvm 2>&1 | Out-Null
-    if(($LASTEXITCODE -ne 0) -Or ((Test-Path Env:\APPVEYOR) -eq $true))
-    {
-        Write-Host "DNVM not found"
-        &{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}
-
-        # Normally this happens automatically during install but AppVeyor has
-        # an issue where you may need to manually re-run setup from within this process.
-        if($env:DNX_HOME -eq $NULL)
-        {
-            Write-Host "Initial DNVM environment setup failed; running manual setup"
-            $tempDnvmPath = Join-Path $env:TEMP "dnvminstall"
-            $dnvmSetupCmdPath = Join-Path $tempDnvmPath "dnvm.ps1"
-            & $dnvmSetupCmdPath setup
-        }
-    }
-}
-
-function Get-DnxVersion
-{
-    $globalJson = join-path $PSScriptRoot "global.json"
-    $jsonData = Get-Content -Path $globalJson -Raw | ConvertFrom-JSON
-    return $jsonData.sdk.version
-}
-
-function Restore-Packages
-{
-    param([string] $DirectoryName)
-    & dnu restore ("""" + $DirectoryName + """")
-}
-
-function Build-Project
-{
-    param([string] $DirectoryName)
-    & dnu build ("""" + $DirectoryName + """") --configuration Release; if($LASTEXITCODE -ne 0) { exit 1 }
-}
-
-function Package-Project
-{
-    param([string] $DirectoryName)
-    & dnu pack ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
-}
-
-function Publish-TestProject
-{
-    param([string] $DirectoryName, [int]$Index)
-
-    # Publish to a numbered/indexed folder rather than the full test project name
-    # because the package paths get long and start exceeding OS limitations.
-    & dnu publish ("""" + $DirectoryName + """") --configuration Release --no-source --out .\artifacts\tests\$Index; if($LASTEXITCODE -ne 0) { exit 2 }
+  [cmdletbinding()]
+  param([string] $DirectoryName)
+  & dotnet build ("""" + $DirectoryName + """") -c Release; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
 function Invoke-Tests
 {
-    Get-ChildItem .\artifacts\tests -Filter test.cmd -Recurse | ForEach-Object { & $_.FullName; if($LASTEXITCODE -ne 0) { exit 3 } }
+  [cmdletbinding()]
+  param([string] $DirectoryName)
+  & dotnet test ("""" + $DirectoryName + """") -c Release; if($LASTEXITCODE -ne 0) { exit 1 }
+}
+
+function Invoke-DotNetPack
+{
+  [cmdletbinding()]
+  param([string] $DirectoryName)
+  & dotnet pack ("""" + $DirectoryName + """") -c Release -o .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
 function Remove-PathVariable
 {
-    param([string] $VariableToRemove)
-    $path = [Environment]::GetEnvironmentVariable("PATH", "User")
-    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
-    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "User")
-    $path = [Environment]::GetEnvironmentVariable("PATH", "Process")
-    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
-    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "Process")
+  [cmdletbinding()]
+  param([string] $VariableToRemove)
+  $path = [Environment]::GetEnvironmentVariable("PATH", "User")
+  $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
+  [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "User")
+  $path = [Environment]::GetEnvironmentVariable("PATH", "Process")
+  $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
+  [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "Process")
 }
 
-########################
-# THE BUILD!
-########################
+# Prepare the dotnet CLI folder
+$env:DOTNET_INSTALL_DIR="$(Convert-Path "$PSScriptRoot")\.dotnet\win7-x64"
+if (!(Test-Path $env:DOTNET_INSTALL_DIR))
+{
+  mkdir $env:DOTNET_INSTALL_DIR | Out-Null
+}
 
-Push-Location $PSScriptRoot
+# Download the dotnet CLI install script
+if (!(Test-Path .\dotnet\install.ps1))
+{
+  Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1" -OutFile ".\.dotnet\dotnet-install.ps1"
+}
 
-$dnxVersion = Get-DnxVersion
+# Run the dotnet CLI install
+& .\.dotnet\dotnet-install.ps1
 
-# Clean
-if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
-
-# Remove the installed DNVM from the path and force use of
-# per-user DNVM (which we can upgrade as needed without admin permissions)
-Remove-PathVariable "*Program Files\Microsoft DNX\DNVM*"
-Install-Dnvm
-
-# Install DNX
-dnvm update-self
-dnvm upgrade
-
-# Make sure these versions of DNX (for now) are installed
-dnvm install $dnxVersion -r clr -a x86 -NoNative 
-dnvm install $dnxVersion -r clr -a x64 -NoNative 
-dnvm install $dnxVersion -r coreclr -a x86 -NoNative 
-dnvm install $dnxVersion -r coreclr -a x64 -NoNative 
-dnvm use $dnxVersion -r clr
-dnvm list
-npm cache clean
-dnu restore
-
-# Package restore
-Get-ChildItem -Path . -Filter *.xproj -Recurse | ForEach-Object { dnu restore ("""" + $_.DirectoryName + """") }
+# Add the dotnet folder path to the process. This gets skipped
+# by Install-DotNetCli if it's already installed.
+Remove-PathVariable $env:DOTNET_INSTALL_DIR
+$env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
 
 # Set build number
-$env:DNX_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1}[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-Write-Host "Build number:" $env:DNX_BUILD_VERSION
+$env:DOTNET_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1}[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+Write-Host "Build number:" $env:DOTNET_BUILD_VERSION
+
+# Clean
+if(Test-Path .\artifacts) 
+{ 
+	Remove-Item .\artifacts -Force -Recurse 
+}
+
+# Package restore
+& dotnet restore
 
 # Build/package
-Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Package-Project $_.DirectoryName }
-# Get-ChildItem -Path .\samples -Filter *.xproj -Recurse | ForEach-Object { Build-Project $_.DirectoryName }
+Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Invoke-DotNetPack $_.DirectoryName }
+Get-ChildItem -Path .\samples -Filter *.xproj -Recurse | ForEach-Object { Invoke-DotNetBuild $_.DirectoryName }
 
-# Publish tests so we can test without recompiling
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object -Begin { $TestIndex = 0 } -Process { Publish-TestProject -DirectoryName $_.DirectoryName -Index $TestIndex; $TestIndex++; }
-
-# Test under CLR
-# Invoke-Tests
-
-# Switch to Core CLR
-#dnvm use $dnxVersion -r CoreCLR
-
-# Test under Core CLR
-#Invoke-Tests
+# Test
+# Get-ChildItem -Path .\tests -Filter *.xproj -Recurse | ForEach-Object { Invoke-Tests $_.DirectoryName }
 
 Pop-Location
+
+
