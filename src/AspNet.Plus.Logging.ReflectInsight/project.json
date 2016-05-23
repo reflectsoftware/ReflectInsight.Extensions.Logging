@@ -14,7 +14,7 @@
     "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core (only available for NET 4.*)",
     "requireLicenseAcceptance": true,
     "owners": [ "ZoneMatrix" ],
-    "authors": [ "AspNet.Plus contributors" ],
+    "authors": [ "AspNet.Plus contributors" ], 
     "tags": [
       "ASP.NET Core",
       "Logging",
