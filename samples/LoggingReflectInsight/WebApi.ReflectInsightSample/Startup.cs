@@ -1,5 +1,5 @@
 ﻿// ASP.NET.Plus
-// Copyright (c) 2016 ZoneMatrix Inc.
+// Copyright (c) 2016 ASP.NET Plus.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
 using AspNet.Plus.Logging.ReflectInsight;
@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 
 namespace WebApi.ReflectInsightSample
 {
