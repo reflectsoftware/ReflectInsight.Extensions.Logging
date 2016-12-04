@@ -5,9 +5,9 @@
 [![Stars](https://img.shields.io/github/stars/aspnet-plus/AspNet.Plus.Logging.svg)](https://github.com/aspnet-plus/AspNet.Plus.Logging/stargazers)
 [![Join the chat at https://gitter.im/aspnet-plus/AspNet.Plus.Logging](https://badges.gitter.im/aspnet-plus/AspNet.Plus.Logging.svg)](https://gitter.im/aspnet-plus/AspNet.Plus.Logging?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A set of Nuget packages to help ASP.NET 5 developers build simple quality logging related code.
+A set of Nuget packages to help NET Core developers build simple quality logging related code.
 
-**NOTE**: *The AspNet.Plus.Logging.ReflectInsight does not support DNX Core, as of Yet!*
+**NOTE**: *The AspNet.Plus.Logging.ReflectInsight only supports .NET Core Full Framework*
 
 **Available Nuget packages**
 

@@ -5,11 +5,12 @@
   },
 
   "dependencies": {
-    "Microsoft.Extensions.Logging": "1.0.0-rc2-final",
-    "AspNet.Plus.Logging.ReflectInsight": "1.0.0-*"
+    "Microsoft.Extensions.Logging": "1.1.0-preview1-final",
+    "AspNet.Plus.Logging.ReflectInsight": "1.0.1-*"
   },
 
   "frameworks": {
-    "net451": { }
+    "net4.6.1": {
+    }
   }
 }

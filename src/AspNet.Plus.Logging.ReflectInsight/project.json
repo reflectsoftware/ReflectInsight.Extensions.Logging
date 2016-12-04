@@ -1,20 +1,20 @@
 {
-  "version": "1.0.0-rc2",
+  "version": "1.0.1-rc2",
   "title": "AspNet.Plus.Logging.ReflectInsight",
   "language": "en-US",
   "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
-  "copyright": "Copyright 2016, ZoneMatrix",
+  "copyright": "Copyright 2016, ASP.NET Plus",
   "authors": [ "AspNet.Plus contributors" ],
   "packOptions": {
     "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
-    "copyright": "Copyright 2016, ZoneMatrix",
+    "copyright": "Copyright 2016, AspNet.Plus",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "projectUrl": "https://github.com/aspnet-plus/AspNet.Plus.Logging",
     "iconUrl": "http://avatars2.githubusercontent.com/u/16177606",
-    "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core (only available for NET 4.*)",
+    "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core (only available for NET 4.* Full Framework)",
     "requireLicenseAcceptance": true,
-    "owners": [ "ZoneMatrix" ],
-    "authors": [ "AspNet.Plus contributors" ], 
+    "owners": [ "AspNet.Plus" ],
+    "authors": [ "AspNet.Plus contributors" ],
     "tags": [
       "ASP.NET Core",
       "Logging",
@@ -33,18 +33,17 @@
     "keyFile": "../../key.snk"
   },
   "scripts": {
-    "postcompile": [ "dotnet pack -c release   -o ../../artifacts/packages  --no-build --version-suffix %project:Version% project.json" ]
+    "postcompile": [ "dotnet pack -c release -o ../../artifacts/packages  --no-build --version-suffix %project:Version% project.json" ]
   },
   "dependencies": {
-    "Microsoft.NETCore.Platforms": "1.0.1-rc2-24027",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc2-final",
-    "ReflectSoftware.Insight": "5.6.0"
+    "Microsoft.Extensions.Logging.Abstractions": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Logging": "1.1.0-preview1-final",
+    "ReflectSoftware.Insight": "5.6.1.2"
   },
   "frameworks": {
-    "net451": {
+    "net461": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.10.0",
+        "System.Runtime": "4.0.20",
         "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"
       }

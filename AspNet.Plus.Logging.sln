@@ -7,8 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. src", "02. src", "{BFA6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Solution Items", "01. Solution Items", "{D94023CF-59CC-4D69-B30B-991C7D52F49A}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		header\AspNet.Plus.licenseheader = header\AspNet.Plus.licenseheader
+		build.ps1 = build.ps1
 		global.json = global.json
+		README.md = README.md
 		header\VersionInfo.cs = header\VersionInfo.cs
 	EndProjectSection
 EndProject
