@@ -1,5 +1,5 @@
 ﻿// ASP.NET.Plus
-// Copyright (c) 2016 ZoneMatrix Inc.
+// Copyright (c) 2016 ASP.NET Plus.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
 using Microsoft.Extensions.Logging;
@@ -40,11 +40,12 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// <summary>
         /// Begins a logical operation scope.
         /// </summary>
+        /// <typeparam name="TState">The type of the state.</typeparam>
         /// <param name="state">The identifier for the scope.</param>
         /// <returns>
         /// An IDisposable that ends the logical operation scope on dispose.
         /// </returns>
-        public IDisposable BeginScopeImpl(object state)
+        public IDisposable BeginScope<TState>(TState state)
         {
             return NoopDisposable.Instance.Value;
         }
@@ -62,15 +63,16 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// <summary>
         /// Aggregates most logging patterns to a single method.
         /// </summary>
-        /// <param name="logLevel"></param>
-        /// <param name="eventId"></param>
-        /// <param name="state"></param>
-        /// <param name="exception"></param>
-        /// <param name="formatter"></param>
+        /// <typeparam name="TState">The type of the state.</typeparam>
+        /// <param name="logLevel">The log level.</param>
+        /// <param name="eventId">The event identifier.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="exception">The exception.</param>
+        /// <param name="formatter">The formatter.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
-        public void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel)) // || logLevel == LogLevel.None)
+            if (!IsEnabled(logLevel) || logLevel == LogLevel.None)
             {
                 return;
             }
@@ -87,62 +89,49 @@ namespace AspNet.Plus.Logging.ReflectInsight
                 return;
             }
 
-            var methodType = MessageType.Clear;
+            var messageType = MessageType.Clear;
             switch (logLevel)
             {
-                case LogLevel.Verbose:
-                    methodType = MessageType.SendVerbose;
+                case LogLevel.Debug:
+                    messageType = MessageType.SendDebug;
                     break;
 
-                case LogLevel.Debug:
-                    methodType = MessageType.SendDebug;
+                case LogLevel.Trace:
+                    messageType = MessageType.SendTrace;
                     break;
 
                 case LogLevel.Information:
-                    methodType = MessageType.SendInformation;
+                    messageType = MessageType.SendInformation;
                     break;
 
                 case LogLevel.Warning:
-                    methodType = MessageType.SendWarning;
+                    messageType = MessageType.SendWarning;
                     break;
 
                 case LogLevel.Error:
-                    methodType = MessageType.SendError;
+                    messageType = MessageType.SendError;
                     break;
 
                 case LogLevel.Critical:
-                    methodType = MessageType.SendFatal;
+                    messageType = MessageType.SendFatal;
                     break;
             }
 
             var details = (string)null;
             if (exception != null)
             {
-                NameValueCollection additional = null;
-                if(eventId > 0)
+                var additional = (NameValueCollection)null;
+                if(eventId.Id > 0)
                 {
                     additional = new NameValueCollection();
-                    additional["eventId"] = eventId.ToString();
+                    additional["eventName"] = eventId.Name ?? messageType.ToString();
+                    additional["eventId"] = eventId.Id.ToString();
                 }
-
-                if (state is ILogValues)
-                {
-                    additional = additional ?? new NameValueCollection();
-
-                    var logValues = (state as ILogValues);
-                    foreach(var keyValue in logValues.GetValues())
-                    {
-                        if (keyValue.Key != "{OriginalFormat}")
-                        {
-                            additional[keyValue.Key] = keyValue.Value?.ToString();
-                        }
-                    }
-                }
-
+                
                 details = ExceptionBasePublisher.ConstructIndentedMessage(exception, additional);
             }
 
-            RILogManager.Get(_name).Send(methodType, message, details);
+            RILogManager.Get(_name).Send(messageType, message, details);
         }
     }
 }

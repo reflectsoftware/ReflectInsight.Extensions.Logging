@@ -1,127 +1,32 @@
-########################
-# FUNCTIONS
-########################
-function Install-Dnvm
-{
-    & where.exe dnvm 2>&1 | Out-Null
-    if(($LASTEXITCODE -ne 0) -Or ((Test-Path Env:\APPVEYOR) -eq $true))
-    {
-        Write-Host "DNVM not found"
-        &{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}
-
-        # Normally this happens automatically during install but AppVeyor has
-        # an issue where you may need to manually re-run setup from within this process.
-        if($env:DNX_HOME -eq $NULL)
-        {
-            Write-Host "Initial DNVM environment setup failed; running manual setup"
-            $tempDnvmPath = Join-Path $env:TEMP "dnvminstall"
-            $dnvmSetupCmdPath = Join-Path $tempDnvmPath "dnvm.ps1"
-            & $dnvmSetupCmdPath setup
-        }
-    }
-}
-
-function Get-DnxVersion
-{
-    $globalJson = join-path $PSScriptRoot "global.json"
-    $jsonData = Get-Content -Path $globalJson -Raw | ConvertFrom-JSON
-    return $jsonData.sdk.version
-}
-
-function Restore-Packages
-{
-    param([string] $DirectoryName)
-    & dnu restore ("""" + $DirectoryName + """")
-}
-
-function Build-Project
-{
-    param([string] $DirectoryName)
-    & dnu build ("""" + $DirectoryName + """") --configuration Release; if($LASTEXITCODE -ne 0) { exit 1 }
-}
-
-function Package-Project
-{
-    param([string] $DirectoryName)
-    & dnu pack ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
-}
-
-function Publish-TestProject
-{
-    param([string] $DirectoryName, [int]$Index)
-
-    # Publish to a numbered/indexed folder rather than the full test project name
-    # because the package paths get long and start exceeding OS limitations.
-    & dnu publish ("""" + $DirectoryName + """") --configuration Release --no-source --out .\artifacts\tests\$Index; if($LASTEXITCODE -ne 0) { exit 2 }
-}
-
-function Invoke-Tests
-{
-    Get-ChildItem .\artifacts\tests -Filter test.cmd -Recurse | ForEach-Object { & $_.FullName; if($LASTEXITCODE -ne 0) { exit 3 } }
-}
-
-function Remove-PathVariable
-{
-    param([string] $VariableToRemove)
-    $path = [Environment]::GetEnvironmentVariable("PATH", "User")
-    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
-    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "User")
-    $path = [Environment]::GetEnvironmentVariable("PATH", "Process")
-    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
-    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "Process")
-}
-
-########################
-# THE BUILD!
-########################
+echo "build: Build started"
 
 Push-Location $PSScriptRoot
 
-$dnxVersion = Get-DnxVersion
+if(Test-Path .\artifacts) {
+	echo "build: Cleaning .\artifacts"
+	Remove-Item .\artifacts -Force -Recurse
+}
 
-# Clean
-if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
+& dotnet restore --no-cache
 
-# Remove the installed DNVM from the path and force use of
-# per-user DNVM (which we can upgrade as needed without admin permissions)
-Remove-PathVariable "*Program Files\Microsoft DNX\DNVM*"
-Install-Dnvm
+$branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$env:APPVEYOR_REPO_BRANCH -ne $NULL];
+$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+$suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "local"]
 
-# Install DNX
-dnvm update-self
-dnvm upgrade
+echo "build: Version suffix is $suffix"
 
-# Make sure these versions of DNX (for now) are installed
-dnvm install $dnxVersion -r clr -a x86 -NoNative 
-dnvm install $dnxVersion -r clr -a x64 -NoNative 
-dnvm install $dnxVersion -r coreclr -a x86 -NoNative 
-dnvm install $dnxVersion -r coreclr -a x64 -NoNative 
-dnvm use $dnxVersion -r clr
-dnvm list
-npm cache clean
-dnu restore
+foreach ($src in ls src/*) {
+    Push-Location $src
 
-# Package restore
-Get-ChildItem -Path . -Filter *.xproj -Recurse | ForEach-Object { dnu restore ("""" + $_.DirectoryName + """") }
+	echo "build: Packaging project in $src"
 
-# Set build number
-$env:DNX_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1}[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-Write-Host "Build number:" $env:DNX_BUILD_VERSION
+    & dotnet pack -c Release -o ..\..\artifacts --version-suffix=$suffix
+    if($LASTEXITCODE -ne 0) { exit 1 }
 
-# Build/package
-Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Package-Project $_.DirectoryName }
-# Get-ChildItem -Path .\samples -Filter *.xproj -Recurse | ForEach-Object { Build-Project $_.DirectoryName }
+    Pop-Location
+}
 
-# Publish tests so we can test without recompiling
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object -Begin { $TestIndex = 0 } -Process { Publish-TestProject -DirectoryName $_.DirectoryName -Index $TestIndex; $TestIndex++; }
-
-# Test under CLR
-# Invoke-Tests
-
-# Switch to Core CLR
-#dnvm use $dnxVersion -r CoreCLR
-
-# Test under Core CLR
-#Invoke-Tests
 
 Pop-Location
+
+

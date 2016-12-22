@@ -1,35 +1,43 @@
 ﻿{
-  "version": "1.0.0-*",
-  "compilationOptions": {
-    "emitEntryPoint": true
-  },
-
   "dependencies": {
-    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Xml": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "AspNet.Plus.Logging.ReflectInsight": "1.0.0-*"
+    "Microsoft.AspNetCore.Mvc": "1.1.0-preview1-final",
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0-preview1-final",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Logging": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0-preview1-final",
+    "AspNet.Plus.Logging.ReflectInsight": "1.0.1-*"
   },
 
-  "commands": {
-    "web": "Microsoft.AspNet.Server.Kestrel"
+  "tools": {
+    "Microsoft.AspNetCore.Server.IISIntegration.Tools": {
+      "version": "1.1.0-preview1-final",
+      "imports": "portable-net45+win8+dnxcore50"
+    }
   },
 
   "frameworks": {
-    "dnx451": { }
+    "net461": {
+    }    
   },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc"
-  ]
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "preserveCompilationContext": true
+  },
+
+  "runtimeOptions": {
+    "gcServer": true
+  },
+
+  "publishOptions": {
+    "include": [
+      "appsettings.json",
+      "web.config",
+      "ReflectInsight.config"
+    ]
+  }
 }
+

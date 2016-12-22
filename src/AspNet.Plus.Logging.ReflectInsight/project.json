@@ -1,47 +1,52 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1-rc2",
+  "title": "AspNet.Plus.Logging.ReflectInsight",
+  "language": "en-US",
   "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
-  "copyright": "Copyright 2016, ZoneMatrix",
-  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-  "projectUrl": "https://github.com/aspnet-plus/AspNet.Plus.Logging",
-  "iconUrl": "http://avatars2.githubusercontent.com/u/16177606",
-  "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core.",
-  "requireLicenseAcceptance": true,
-  "owners": [
-    "ZoneMatrix"
-  ],
-  "authors": [
-    "codematrix"
-  ],
-  "tags": [
-    "DNX",
-    "ASP.NET",
-    "Logging",
-    "ReflectSoftware",
-    "ReflectInsight",
-    "WebAPI",
-    "Mvc"
-  ],
-  "compilationOptions": {
+  "copyright": "Copyright 2016, ASP.NET Plus",
+  "authors": [ "AspNet.Plus contributors" ],
+  "packOptions": {
+    "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
+    "copyright": "Copyright 2016, AspNet.Plus",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "projectUrl": "https://github.com/aspnet-plus/AspNet.Plus.Logging",
+    "iconUrl": "http://avatars2.githubusercontent.com/u/16177606",
+    "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core (only available for NET 4.* Full Framework)",
+    "requireLicenseAcceptance": true,
+    "owners": [ "AspNet.Plus" ],
+    "authors": [ "AspNet.Plus contributors" ],
+    "tags": [
+      "ASP.NET Core",
+      "Logging",
+      "ReflectSoftware",
+      "ReflectInsight",
+      "WebAPI",
+      "Mvc"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
+    }
+  },
+  "buildOptions": {
     "warningsAsErrors": true,
     "keyFile": "../../key.snk"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
+  "scripts": {
+    "postcompile": [ "dotnet pack -c release -o ../../artifacts/packages  --no-build --version-suffix %project:Version% project.json" ]
   },
   "dependencies": {
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "ReflectSoftware.Insight": "5.6.0"
+    "Microsoft.Extensions.Logging.Abstractions": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Logging": "1.1.0-preview1-final",
+    "ReflectSoftware.Insight": "5.6.1.2"
   },
   "frameworks": {
-    "dnx451": {
+    "net461": {
       "frameworkAssemblies": {
-        "System.XmL": "4.0.0.0",
+        "System.Runtime": "4.0.20",
+        "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"
       }
     }
   }
 }
-
-
