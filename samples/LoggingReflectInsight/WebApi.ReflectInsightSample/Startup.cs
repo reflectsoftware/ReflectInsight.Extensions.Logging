@@ -61,7 +61,7 @@ namespace WebApi.ReflectInsightSample
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.MinimumLevel = LogLevel.Debug;
-            loggerFactory.AddReflectInsight("ReflectInsight");
+            loggerFactory.AddReflectInsight("ReflectInsight.config");
 
             app.UseIISPlatformHandler();
             app.UseMvc();
