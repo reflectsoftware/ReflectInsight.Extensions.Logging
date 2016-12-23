@@ -57,9 +57,9 @@ namespace WebApi.ReflectInsightSample
         /// </summary>
         /// <param name="app">The application.</param>
         /// <param name="loggerFactory">The logger factory.</param>
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {            
-            loggerFactory.AddReflectInsight("ReflectInsight");
+            loggerFactory.AddReflectInsight("ReflectInsight.config");
             
             app.UseMvc();
 

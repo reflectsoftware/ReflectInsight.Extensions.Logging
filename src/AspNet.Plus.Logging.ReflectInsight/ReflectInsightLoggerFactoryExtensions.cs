@@ -19,7 +19,7 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// <returns></returns>
         public static ILoggerFactory AddReflectInsight(this ILoggerFactory factory, string configFile = "ReflectInsight.config")
         {
-            factory.AddProvider(new ReflectInsightLoggerProvider());
+            factory.AddProvider(new ReflectInsightLoggerProvider(configFile));
             return factory;
         }
     }
