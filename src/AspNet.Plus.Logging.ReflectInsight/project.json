@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1-rc2",
+  "version": "1.1.0",
   "title": "AspNet.Plus.Logging.ReflectInsight",
   "language": "en-US",
   "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
@@ -33,11 +33,11 @@
     "keyFile": "../../key.snk"
   },
   "scripts": {
-    "postcompile": [ "dotnet pack -c release -o ../../artifacts/packages  --no-build --version-suffix %project:Version% project.json" ]
+    "postcompile": [ "dotnet pack -c release -o ../../artifacts  --no-build --version-suffix %project:Version% project.json" ]
   },
   "dependencies": {
-    "Microsoft.Extensions.Logging.Abstractions": "1.1.0-preview1-final",
-    "Microsoft.Extensions.Logging": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.1.0",
+    "Microsoft.Extensions.Logging": "1.1.0",
     "ReflectSoftware.Insight": "5.6.1.2"
   },
   "frameworks": {

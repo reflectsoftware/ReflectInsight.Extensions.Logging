@@ -58,11 +58,9 @@ namespace WebApi.ReflectInsightSample
         /// <param name="app">The application.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.MinimumLevel = LogLevel.Debug;
+        {            
             loggerFactory.AddReflectInsight("ReflectInsight.config");
-
-            app.UseIISPlatformHandler();
+            
             app.UseMvc();
 
             var exception = new Exception("Some exception");
