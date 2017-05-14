@@ -10,7 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Solution Items", "01. S
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
 		global.json = global.json
+		LICENSE.txt = LICENSE.txt
+		nuget.config = nuget.config
 		README.md = README.md
+		header\ReflectSoftware.licenseheader = header\ReflectSoftware.licenseheader
 		header\VersionInfo.cs = header\VersionInfo.cs
 	EndProjectSection
 EndProject

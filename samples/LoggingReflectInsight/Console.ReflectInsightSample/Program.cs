@@ -49,7 +49,7 @@ namespace Console.ReflectInsightSample
             logger.LogCritical(exception, "LogCritical with exception and some args: {0}, {2}", 1, 2);
             logger.LogCritical(exception);
 
-            logger.LogJSON("Test", new System.Collections.Generic.List<int>());
+            logger.LogJSON("Test", new System.Collections.Generic.List<int> { 1, 2, 3 } );
             logger.LogLoadedProcesses();
             logger.LogLoadedAssemblies();
 

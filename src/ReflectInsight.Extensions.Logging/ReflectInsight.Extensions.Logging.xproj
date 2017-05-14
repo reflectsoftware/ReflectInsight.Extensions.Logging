@@ -13,9 +13,6 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\..\header\AspNet.Plus.licenseheader">
-      <Link>ReflectSoftware.licenseheader</Link>
-    </Content>
     <Content Include="..\..\header\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Content>
