@@ -12,13 +12,13 @@
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\header\AspNet.Plus.licenseheader">
-      <Link>AspNet.Plus.licenseheader</Link>
-    </Content>
-  </ItemGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\header\AspNet.Plus.licenseheader">
+      <Link>ReflectSoftware.licenseheader</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

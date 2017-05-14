@@ -1,33 +1,34 @@
-﻿// ASP.NET.Plus
-// Copyright (c) 2016 ASP.NET Plus.
+﻿// ReflectInsight
+// Copyright (c) 2017 ReflectSoftware.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Internal;
 using ReflectSoftware.Insight;
 using ReflectSoftware.Insight.Common;
 using RI.Utils.ExceptionManagement;
 using System;
 using System.Collections.Specialized;
 
-namespace AspNet.Plus.Logging.ReflectInsight
+namespace ReflectInsight.Extensions.Logging
 {
     /// <summary>
     /// 
     /// </summary>
     /// <seealso cref="Microsoft.Extensions.Logging.ILogger" />
-    public class ReflectInsightLogger : ILogger
+    public interface IReflectInsightLogger: ILogger
+    {
+        IReflectInsight GetLogger();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Microsoft.Extensions.Logging.IReflectInsightLogger" />
+    public class ReflectInsightLogger : IReflectInsightLogger
     {
         private readonly string _name;
-
-        private class NoopDisposable : IDisposable
-        {
-            public static Lazy<NoopDisposable> Instance = new Lazy<NoopDisposable>(() => new NoopDisposable());
-
-            public void Dispose()
-            {
-            }
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ReflectInsightLogger"/> class.
         /// </summary>
@@ -47,7 +48,9 @@ namespace AspNet.Plus.Logging.ReflectInsight
         /// </returns>
         public IDisposable BeginScope<TState>(TState state)
         {
-            return NoopDisposable.Instance.Value;
+            var formatter = (state as FormattedLogValues);
+            var message = formatter?.ToString() ?? (state.ToString() ?? string.Empty);
+            return GetLogger().TraceMethod(message);
         }
 
         /// <summary>
@@ -131,7 +134,16 @@ namespace AspNet.Plus.Logging.ReflectInsight
                 details = ExceptionBasePublisher.ConstructIndentedMessage(exception, additional);
             }
 
-            RILogManager.Get(_name).Send(messageType, message, details);
+            GetLogger().Send(messageType, message, details);
+        }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        /// <returns></returns>
+        public IReflectInsight GetLogger()
+        {
+            return RILogManager.Get(_name);
         }
     }
 }

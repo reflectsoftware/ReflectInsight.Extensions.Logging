@@ -1,5 +1,5 @@
-﻿// ASP.NET.Plus
-// Copyright (c) 2016 ASP.NET Plus.
+﻿// ReflectInsight
+// Copyright (c) 2017 ReflectSoftware.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
 using Microsoft.AspNetCore.Builder;

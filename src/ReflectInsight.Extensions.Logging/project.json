@@ -1,23 +1,24 @@
 {
   "version": "1.1.0",
-  "title": "AspNet.Plus.Logging.ReflectInsight",
+  "title": "ReflectInsight.Extensions.Logging",
   "language": "en-US",
-  "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
-  "copyright": "Copyright 2016, ASP.NET Plus",
-  "authors": [ "AspNet.Plus contributors" ],
+  "description": "A ReflectInsight Logger implementation Microsoft.Extensions.Logging",
+  "copyright": "Copyright 2017, ReflectSoftware",
+  "authors": [ "ReflectSoftware" ],
   "packOptions": {
-    "description": "A ReflectInsight Logger implementation for ASP.NET Core.",
+    "description": "A ReflectInsight Logger implementation for Microsoft.Extensions.Logging.",
     "copyright": "Copyright 2016, AspNet.Plus",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-    "projectUrl": "https://github.com/aspnet-plus/AspNet.Plus.Logging",
-    "iconUrl": "http://avatars2.githubusercontent.com/u/16177606",
-    "releaseNotes": "AspNet.Plus.Logging.ReflectInsight - ReflectInsight Logger for ASP.NET Core (only available for NET 4.* Full Framework)",
+    "projectUrl": "https://github.com/reflectsoftware/ReflectInsight.Extensions.Logging",
+    "iconUrl": "http://reflectsoftware.com/images/ReflectInsight-Element-256.png",
+    "releaseNotes": "ReflectInsight.Extensions.Logging - ReflectInsight Logger for Microsoft.Extensions.Logging (only available for NET 4.* Full Framework)",
     "requireLicenseAcceptance": true,
-    "owners": [ "AspNet.Plus" ],
-    "authors": [ "AspNet.Plus contributors" ],
+    "owners": [ "ReflectSoftware" ],
+    "authors": [ "ReflectSoftware contributors" ],
     "tags": [
-      "ASP.NET Core",
+      "ASP.NET",
       "Logging",
+      "Extensions",
       "ReflectSoftware",
       "ReflectInsight",
       "WebAPI",
@@ -25,7 +26,7 @@
     ],
     "repository": {
       "type": "git",
-      "url": "git://github.com/aspnet-plus/aspnet.plus.logging"
+      "url": "git://github.com/reflectsoftware/ReflectInsight.Extensions.Logging"
     }
   },
   "buildOptions": {
@@ -38,7 +39,7 @@
   "dependencies": {
     "Microsoft.Extensions.Logging.Abstractions": "1.1.0",
     "Microsoft.Extensions.Logging": "1.1.0",
-    "ReflectSoftware.Insight": "5.6.1.2"
+    "ReflectSoftware.Insight": "5.7.0-rc1"
   },
   "frameworks": {
     "net461": {

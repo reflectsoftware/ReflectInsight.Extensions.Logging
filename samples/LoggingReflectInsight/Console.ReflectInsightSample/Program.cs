@@ -1,9 +1,9 @@
-﻿// ASP.NET.Plus
-// Copyright (c) 2016 ASP.NET Plus.
+﻿// ReflectInsight
+// Copyright (c) 2017 ReflectSoftware.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
-using AspNet.Plus.Logging.ReflectInsight;
 using Microsoft.Extensions.Logging;
+using ReflectInsight.Extensions.Logging;
 using System;
 
 namespace Console.ReflectInsightSample
@@ -18,12 +18,18 @@ namespace Console.ReflectInsightSample
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
-            var loggerFactory = new LoggerFactory();            
+            var loggerFactory = new LoggerFactory();                        
             loggerFactory.AddReflectInsight();
-            
-            var logger = loggerFactory.CreateLogger<Program>();
+                        
+            var logger = loggerFactory.CreateLogger("Logger");
+
+            using (logger.BeginScope("Hello: {0}, {1}", 5, 6))
+            {
+                logger.LogWarning("LogWarning with some args: {0}, {2}", 1, 2);
+            }
+
             var exception = new Exception("Some exception");
-            
+
             logger.LogDebug("LogDebug with some args: {0}, {2}", 1, 2);
             logger.LogTrace("LogTrace with some args: {0}, {2}", 1, 2);
 
@@ -43,8 +49,13 @@ namespace Console.ReflectInsightSample
             logger.LogCritical(exception, "LogCritical with exception and some args: {0}, {2}", 1, 2);
             logger.LogCritical(exception);
 
+            logger.LogJSON("Test", new System.Collections.Generic.List<int>());
+            logger.LogLoadedProcesses();
+            logger.LogLoadedAssemblies();
+
             System.Console.WriteLine("Press any key to continue...");
-            System.Console.ReadKey();        
+            System.Console.ReadKey();
+
         }
     }
 }

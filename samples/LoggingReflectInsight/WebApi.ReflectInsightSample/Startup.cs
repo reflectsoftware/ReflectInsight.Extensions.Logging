@@ -1,8 +1,8 @@
-﻿// ASP.NET.Plus
-// Copyright (c) 2016 ASP.NET Plus.
+﻿// ReflectInsight
+// Copyright (c) 2017 ReflectSoftware.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. 
 
-using AspNet.Plus.Logging.ReflectInsight;
+using ReflectInsight.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +65,11 @@ namespace WebApi.ReflectInsightSample
 
             var exception = new Exception("Some exception");
             var logger = loggerFactory.CreateLogger<Startup>();
+
+            using (logger.BeginScope("Hello: {0}, {1}", 5, 6))
+            {
+                logger.LogWarning("LogWarning with some args: {0}, {2}", 1, 2);
+            }
 
             logger.LogDebug("LogDebug");
             logger.LogTrace("LogTrace");
