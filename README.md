@@ -1,9 +1,8 @@
 # ReflectInsight.Extensions.Logging
 
-[![Build status](https://ci.appveyor.com/api/projects/status/oihv7jrwa92qbn9p?svg=true)](https://ci.appveyor.com/project/reflectsoftware/reflectinsight.extensions.logging) 
+[![Build status](https://ci.appveyor.com/api/projects/status/0ftxpw3dne25ncra?svg=true)](https://ci.appveyor.com/project/ReflectSoftware/reflectinsight-extensions-logging) 
 [![Release](https://img.shields.io/github/release/aspnet-plus/AspNet.Plus.Logging.svg)](https://github.com/reflectsoftware/reflectinsight.extensions.logging/releases/latest)
 [![Stars](https://img.shields.io/github/stars/aspnet-plus/AspNet.Plus.Logging.svg)](https://github.com/reflectsoftware/reflectinsight.extensions.logging/stargazers)
-
 
 A set of Nuget packages to help NET Core developers build simple quality logging related code.
 
