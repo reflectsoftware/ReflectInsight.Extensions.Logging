@@ -37,29 +37,58 @@ namespace ReflectInsight.Extensions.Logging
 
         #region Private
         /// <summary>
+        /// Gets the reflect insight.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <returns></returns>
+        private static IReflectInsight[] GetReflectInsights(ILogger logger)
+        {
+            var bindings = BindingFlags.NonPublic | BindingFlags.Instance;
+            var field = logger.GetType().GetField("_loggers", bindings);
+            if (field != null)
+            {
+                var loggers = field.GetValue(logger) as ILogger[];
+                if (loggers != null)
+                {
+                    return loggers
+                        .Where(x => x is IReflectInsightLogger)
+                        .Select(x => (x as IReflectInsightLogger).GetLogger())
+                        .ToArray();
+                }
+            }
+
+            return new IReflectInsight[0];
+        }
+        
+        /// <summary>
         /// Gets the reflect insight logger.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <returns></returns>
-        private static IReflectInsight[] GetReflectInsight(this ILogger logger)
+        private static IReflectInsight[] GetReflectInsightInstances(this ILogger logger)
         {
             return _riLoggers.GetOrAdd(logger.GetHashCode(), (key) =>
             {
+                var riLoggers = (IReflectInsight[])null;
                 var bindings = BindingFlags.NonPublic | BindingFlags.Instance;
-                var field = logger.GetType().GetField("_loggers", bindings);
-                if (field != null)
+                var loggerType = logger.GetType();                                
+
+                var field = loggerType.GetField("_loggers", bindings);
+                if(field == null)
                 {
-                    var loggers = field.GetValue(logger) as ILogger[];
-                    if (loggers != null)
+                    field = loggerType.GetField("_logger", bindings);
+                    var innerLoger = field.GetValue(logger) as ILogger;
+                    if(innerLoger != null)
                     {
-                        return loggers
-                            .Where(x => x is IReflectInsightLogger)
-                            .Select(x => (x as IReflectInsightLogger).GetLogger())
-                            .ToArray();
+                        riLoggers = GetReflectInsights(innerLoger);
                     }
                 }
+                else
+                {
+                    riLoggers = GetReflectInsights(logger);
+                }
 
-                return new IReflectInsight[0];
+                return riLoggers;
             });
         }
         #endregion Private
@@ -131,7 +160,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger Clear(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.Clear();                
@@ -147,7 +176,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger AddCheckpoint(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.AddCheckpoint();
@@ -164,7 +193,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger AddCheckpoint(this ILogger logger, string name)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.AddCheckpoint(name);
@@ -181,7 +210,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger AddCheckpoint(this ILogger logger, Checkpoint cType)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.AddCheckpoint(cType);
@@ -199,7 +228,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger AddCheckpoint(this ILogger logger, string name, Checkpoint cType)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.AddCheckpoint(name, cType);
@@ -215,7 +244,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger AddSeparator(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.AddSeparator();
@@ -233,7 +262,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger EnterMethod(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.EnterMethod(str, args);
@@ -251,7 +280,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger EnterMethod(this ILogger logger, MethodBase currentMethod, bool fullName = true)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.EnterMethod(currentMethod, fullName);
@@ -269,7 +298,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ExitMethod(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ExitMethod(str, args);
@@ -287,7 +316,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ExitMethod(this ILogger logger, MethodBase currentMethod, bool fullName = true)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ExitMethod(currentMethod, fullName);
@@ -303,7 +332,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ResetAllCheckpoints(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ResetAllCheckpoints();
@@ -319,7 +348,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ResetCheckpoint(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ResetCheckpoint();
@@ -336,7 +365,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ResetCheckpoint(this ILogger logger, Checkpoint cType)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ResetCheckpoint(cType);
@@ -353,7 +382,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ResetCheckpoint(this ILogger logger, string name)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ResetCheckpoint(name);
@@ -371,7 +400,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ResetCheckpoint(this ILogger logger, string name, Checkpoint cType)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ResetCheckpoint(name, cType);
@@ -390,7 +419,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger Log(this ILogger logger, MessageType mType, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.Send(mType, str, args);
@@ -410,7 +439,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger Log(this ILogger logger, MessageType mType, string str, string details, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.Send(mType, str, details, args);
@@ -426,7 +455,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAppDomainInformation(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAppDomainInformation();
@@ -443,7 +472,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAppDomainInformation(this ILogger logger, AppDomain anAppDomain)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAppDomainInformation(anAppDomain);
@@ -462,7 +491,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAssert(this ILogger logger, bool condition, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAssert(condition, str, args);
@@ -481,7 +510,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAssigned(this ILogger logger, string str, object obj, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAssigned(str, obj, args);
@@ -500,7 +529,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAttachment(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAttachment(str, fileName, args);
@@ -518,7 +547,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAuditFailure(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAuditFailure(str, args);
@@ -536,7 +565,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogAuditSuccess(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendAuditSuccess(str, args);
@@ -554,7 +583,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCheckmark(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCheckmark(str, args);
@@ -573,7 +602,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCheckmark(this ILogger logger, string str, Checkmark cmType, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCheckmark(str, cmType, args);
@@ -592,7 +621,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCollection(this ILogger logger, string str, IEnumerable enumerator, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCollection(str, enumerator, args);
@@ -612,7 +641,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCollection(this ILogger logger, string str, IEnumerable enumerator, ObjectScope scope, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCollection(str, enumerator, scope, args);
@@ -630,7 +659,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogComment(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendComment(str, args);
@@ -649,7 +678,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCurrency(this ILogger logger, string str, decimal? val, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCurrency(str, val, args);
@@ -669,7 +698,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCurrency(this ILogger logger, string str, decimal? val, CultureInfo ci, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCurrency(str, val, ci, args);
@@ -688,7 +717,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogCustomData(this ILogger logger, string str, RICustomData cData, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendCustomData(str, cData, args);
@@ -707,7 +736,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogDateTime(this ILogger logger, string str, DateTime? dt, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendDateTime(str, dt, args);
@@ -727,7 +756,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogDateTime(this ILogger logger, string str, DateTime? dt, string format, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendDateTime(str, dt, format, args);
@@ -747,7 +776,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogDateTime(this ILogger logger, string str, DateTime? dt, CultureInfo ci, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendDateTime(str, dt, ci, args);
@@ -768,7 +797,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogDateTime(this ILogger logger, string str, DateTime? dt, string format, CultureInfo ci, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendDateTime(str, dt, format, ci, args);
@@ -786,7 +815,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogEnumerable<T>(this ILogger logger, IEnumerable<T> enumerable)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendEnumerable<T>(enumerable);
@@ -805,7 +834,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogEnumerable<T>(this ILogger logger, string str, params IEnumerable<T>[] enumerables)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendEnumerable<T>(str, enumerables);
@@ -824,7 +853,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHTML(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHTML(str, stream, args);
@@ -843,7 +872,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHTML(this ILogger logger, string str, TextReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHTML(str, reader, args);
@@ -862,7 +891,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHTMLFile(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHTMLFile(str, fileName, args);
@@ -881,7 +910,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHTMLString(this ILogger logger, string str, string htmlString, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHTMLString(str, htmlString, args);
@@ -897,7 +926,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHttpRequest(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHttpRequest();
@@ -915,7 +944,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogHttpRequest(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendHttpRequest(str, args);
@@ -934,7 +963,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogJSON(this ILogger logger, string str, TextReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendJSON(str, reader, args);
@@ -953,7 +982,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogJSON(this ILogger logger, string str, string json, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendJSON(str, json, args);
@@ -972,7 +1001,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogJSON(this ILogger logger, string str, object json, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendJSON(str, json, args);
@@ -991,7 +1020,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogJSON(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendJSON(str, stream, args);
@@ -1010,7 +1039,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogJSONFile(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendJSONFile(str, fileName, args);
@@ -1029,7 +1058,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLevel(this ILogger logger, string str, LevelType level, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLevel(str, level, args);
@@ -1046,7 +1075,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLinqQuery(this ILogger logger, IQueryable query)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLinqQuery(query);
@@ -1065,7 +1094,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLinqQuery(this ILogger logger, string str, IQueryable query, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLinqQuery(str, query, args);
@@ -1082,7 +1111,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLinqResults(this ILogger logger, IQueryable query)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLinqResults(query);
@@ -1101,7 +1130,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLinqResults(this ILogger logger, string str, IQueryable query, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLinqResults(str, query, args);
@@ -1117,7 +1146,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLoadedAssemblies(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLoadedAssemblies();
@@ -1135,7 +1164,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLoadedAssemblies(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLoadedAssemblies(str, args);
@@ -1151,7 +1180,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLoadedProcesses(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLoadedProcesses();
@@ -1169,7 +1198,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogLoadedProcesses(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendLoadedProcesses(str, args);
@@ -1187,7 +1216,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogMessage(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendMessage(str, args);
@@ -1205,7 +1234,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogNote(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendNote(str, args);
@@ -1224,7 +1253,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogObject(this ILogger logger, string str, object obj, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendObject(str, obj, args);
@@ -1244,7 +1273,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogObject(this ILogger logger, string str, object obj, bool bIgnoreStandard, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendObject(str, obj, bIgnoreStandard, args);
@@ -1264,7 +1293,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogObject(this ILogger logger, string str, object obj, ObjectScope scope, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendObject(str, obj, scope, args);
@@ -1280,7 +1309,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogProcessInformation(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendProcessInformation();
@@ -1297,7 +1326,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogProcessInformation(this ILogger logger, Process aProcess)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendProcessInformation(aProcess);
@@ -1315,7 +1344,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogReminder(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendReminder(str, args);
@@ -1333,7 +1362,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogResume(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendResume(str, args);
@@ -1352,7 +1381,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSQLScript(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSQLScript(str, fileName, args);
@@ -1371,7 +1400,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSQLScript(this ILogger logger, string str, TextReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSQLScript(str, reader, args);
@@ -1390,7 +1419,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSQLScript(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSQLScript(str, stream, args);
@@ -1409,7 +1438,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSQLString(this ILogger logger, string str, string sql, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSQLString(str, sql, args);
@@ -1425,7 +1454,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStackTrace(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStackTrace();
@@ -1443,7 +1472,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStackTrace(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStackTrace(str, args);
@@ -1461,7 +1490,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStart(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStart(str, args);
@@ -1479,7 +1508,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStop(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStop(str, args);
@@ -1498,7 +1527,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStream(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStream(str, fileName, args);
@@ -1517,7 +1546,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStream(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStream(str, stream, args);
@@ -1536,7 +1565,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogStream(this ILogger logger, string str, byte[] stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendStream(str, stream, args);
@@ -1555,7 +1584,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogString(this ILogger logger, string str, string theString, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendString(str, theString, args);
@@ -1574,7 +1603,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogString(this ILogger logger, string str, StringBuilder theString, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendString(str, theString, args);
@@ -1592,7 +1621,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSuspend(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSuspend(str, args);
@@ -1608,7 +1637,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogSystemInformation(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendSystemInformation();
@@ -1627,7 +1656,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTextFile(this ILogger logger, string str, TextReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTextFile(str, reader, args);
@@ -1646,7 +1675,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTextFile(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTextFile(str, fileName, args);
@@ -1665,7 +1694,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTextFile(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTextFile(str, stream, args);
@@ -1681,7 +1710,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogThreadInformation(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendThreadInformation();
@@ -1698,7 +1727,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogThreadInformation(this ILogger logger, Thread aThread)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendThreadInformation(aThread);
@@ -1714,7 +1743,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTimestamp(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTimestamp();
@@ -1731,7 +1760,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTimestamp(this ILogger logger, TimeZoneInfo tz)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTimestamp(tz);
@@ -1749,7 +1778,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTimestamp(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTimestamp(str, args);
@@ -1768,7 +1797,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTimestamp(this ILogger logger, string str, string timeZoneId, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTimestamp(str, timeZoneId, args);
@@ -1787,7 +1816,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTimestamp(this ILogger logger, string str, TimeZoneInfo tz, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTimestamp(str, tz, args);
@@ -1805,7 +1834,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTransfer(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTransfer(str, args);
@@ -1823,7 +1852,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTypedCollection<T>(this ILogger logger, IEnumerable<T> enumerable)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTypedCollection<T>(enumerable);
@@ -1842,7 +1871,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogTypedCollection<T>(this ILogger logger, string str, params IEnumerable<T>[] enumerables)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendTypedCollection<T>(str, enumerables);
@@ -1860,7 +1889,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogVerbose(this ILogger logger, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendVerbose(str, args);
@@ -1879,7 +1908,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXML(this ILogger logger, string str, Stream stream, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXML(str, stream, args);
@@ -1898,7 +1927,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXML(this ILogger logger, string str, TextReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXML(str, reader, args);
@@ -1917,7 +1946,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXML(this ILogger logger, string str, XmlReader reader, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXML(str, reader, args);
@@ -1936,7 +1965,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXML(this ILogger logger, string str, XmlNode node, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXML(str, node, args);
@@ -1955,7 +1984,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXMLFile(this ILogger logger, string str, string fileName, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXMLFile(str, fileName, args);
@@ -1974,7 +2003,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger LogXMLString(this ILogger logger, string str, string xmlString, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.SendXMLString(str, xmlString, args);
@@ -1990,7 +2019,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ViewerClearAll(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ViewerClearAll();
@@ -2006,7 +2035,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ViewerClearWatches(this ILogger logger)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ViewerClearWatches();
@@ -2024,7 +2053,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ViewerSendWatch(this ILogger logger, string labelID, object obj)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ViewerSendWatch(labelID, obj);
@@ -2043,7 +2072,7 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         public static ILogger ViewerSendWatch(this ILogger logger, string labelID, string str, params object[] args)
         {
-            var riLoggers = GetReflectInsight(logger);
+            var riLoggers = GetReflectInsightInstances(logger);
             foreach (var riLogger in riLoggers)
             {
                 riLogger.ViewerSendWatch(labelID, str, args);

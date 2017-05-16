@@ -89,6 +89,10 @@ namespace WebApi.ReflectInsightSample
             logger.LogCritical("LogCritical");
             logger.LogCritical(exception, "LogCritical with exception");
             logger.LogCritical(exception);
+
+            logger.LogJSON("Test", new System.Collections.Generic.List<int> { 1, 2, 3 });
+            logger.LogLoadedProcesses();
+            logger.LogLoadedAssemblies();
         }
     }
 }
