@@ -67,11 +67,12 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         private static IReflectInsight[] GetReflectInsightInstances(this ILogger logger)
         {
-            return _riLoggers.GetOrAdd(logger.GetHashCode(), (key) =>
+            var loggerType = logger.GetType();
+
+            return _riLoggers.GetOrAdd(loggerType.GetHashCode(), (key) =>
             {
                 var riLoggers = (IReflectInsight[])null;
-                var bindings = BindingFlags.NonPublic | BindingFlags.Instance;
-                var loggerType = logger.GetType();                                
+                var bindings = BindingFlags.NonPublic | BindingFlags.Instance;                                            
 
                 var field = loggerType.GetField("_loggers", bindings);
                 if(field == null)
