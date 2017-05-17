@@ -55,7 +55,6 @@ namespace Console.ReflectInsightSample
 
             System.Console.WriteLine("Press any key to continue...");
             System.Console.ReadKey();
-
         }
     }
 }

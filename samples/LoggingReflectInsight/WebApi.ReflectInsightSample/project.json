@@ -7,8 +7,8 @@
     "Microsoft.Extensions.Configuration.FileExtensions": "1.1.0",
     "Microsoft.Extensions.Logging.Abstractions": "1.1.0",
     "Microsoft.Extensions.Logging": "1.1.0",
-    "Microsoft.Extensions.Configuration.Json": "1.1.0",    
-    "ReflectInsight.Extensions.Logging": "1.1.0-*"
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
+    "ReflectInsight.Extensions.Logging": "1.1.2-*"
   },
 
   "tools": {
