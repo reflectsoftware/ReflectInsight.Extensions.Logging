@@ -1,8 +1,10 @@
 # ReflectInsight.Extensions.Logging
 
-[![Build status](https://ci.appveyor.com/api/projects/status/0ftxpw3dne25ncra?svg=true)](https://ci.appveyor.com/project/ReflectSoftware/reflectinsight-extensions-logging)  [![NuGet Version](http://img.shields.io/nuget/v/ReflectInsight.Extensions.Logging.svg?style=flat)](http://www.nuget.org/packages/reflectinsight.extensions.logging/) 
+[![Build status](https://ci.appveyor.com/api/projects/status/0ftxpw3dne25ncra?svg=true)](https://ci.appveyor.com/project/ReflectSoftware/reflectinsight-extensions-logging)
+[![NuGet Version](http://img.shields.io/nuget/v/ReflectInsight.Extensions.Logging.svg?style=flat)](http://www.nuget.org/packages/reflectinsight.extensions.logging/) 
 [![Release](https://img.shields.io/github/release/aspnet-plus/AspNet.Plus.Logging.svg)](https://github.com/reflectsoftware/reflectinsight.extensions.logging/releases/latest)
-[![Stars](https://img.shields.io/github/stars/aspnet-plus/AspNet.Plus.Logging.svg)](https://github.com/reflectsoftware/reflectinsight.extensions.logging/stargazers) [![Stack Overflow](https://img.shields.io/badge/stack%20overflow-reflectinsight-orange.svg)](http://stackoverflow.com/questions/tagged/reflectinsight)
+[![Stars](https://img.shields.io/github/stars/reflectsoftware/reflectinsight.extensions.Logging.svg)](https://github.com/reflectsoftware/reflectinsight.extensions.logging/stargazers) 
+[![Stack Overflow](https://img.shields.io/badge/stack%20overflow-reflectinsight-orange.svg)](http://stackoverflow.com/questions/tagged/reflectinsight)
 
 
 A set of Nuget packages to help NET Core developers build simple quality logging related code.
