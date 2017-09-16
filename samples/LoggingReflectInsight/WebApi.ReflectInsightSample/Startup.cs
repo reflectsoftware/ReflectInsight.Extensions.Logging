@@ -75,19 +75,15 @@ namespace WebApi.ReflectInsightSample
             logger.LogTrace("LogTrace");
             
             logger.LogInformation("LogInformation");
-            logger.LogInformation(exception, "LogInformation with exception");
             logger.LogInformation(exception);
             
             logger.LogWarning("LogWarning");
-            logger.LogWarning(exception, "LogWarning with exception");
             logger.LogWarning(exception);
             
             logger.LogError("LogError");
-            logger.LogError(exception, "LogError with exception");
             logger.LogError(exception);
             
             logger.LogCritical("LogCritical");
-            logger.LogCritical(exception, "LogCritical with exception");
             logger.LogCritical(exception);
 
             logger.LogJSON("Test", new System.Collections.Generic.List<int> { 1, 2, 3 });
