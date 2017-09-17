@@ -88,7 +88,7 @@ namespace WebApi.ReflectInsightSample
 
             logger.LogJSON("Test", new System.Collections.Generic.List<int> { 1, 2, 3 });
             logger.LogLoadedProcesses();
-            logger.LogLoadedAssemblies();
+            logger.LogLoadedAssemblies();            
         }
     }
 }

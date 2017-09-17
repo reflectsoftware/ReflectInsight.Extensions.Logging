@@ -43,21 +43,25 @@ namespace ReflectInsight.Extensions.Logging
         /// <returns></returns>
         private static IReflectInsight[] GetReflectInsights(ILogger logger)
         {
-            var bindings = BindingFlags.NonPublic | BindingFlags.Instance;
-            var field = logger.GetType().GetField("_loggers", bindings);
-            if (field != null)
+            var reflectInsightLoggers = new List<IReflectInsight>();
+            var property = logger.GetType().GetProperty("Loggers");
+            if (property != null)
             {
-                var loggers = field.GetValue(logger) as ILogger[];
-                if (loggers != null)
+                var loggers = (property.GetValue(logger) as Array);
+                if(loggers != null)
                 {
-                    return loggers
-                        .Where(x => x is IReflectInsightLogger)
-                        .Select(x => (x as IReflectInsightLogger).GetLogger())
-                        .ToArray();
+                    foreach (var logItem in loggers)
+                    {
+                        var logProperty = logItem.GetType().GetProperty("Logger");
+                        if(logProperty.GetValue(logItem) is IReflectInsightLogger)
+                        {
+                            reflectInsightLoggers.Add((logProperty.GetValue(logItem) as IReflectInsightLogger).GetLogger());
+                        }
+                    }
                 }
             }
 
-            return new IReflectInsight[0];
+            return reflectInsightLoggers.ToArray();
         }
         
         /// <summary>
@@ -71,13 +75,12 @@ namespace ReflectInsight.Extensions.Logging
 
             return _riLoggers.GetOrAdd(loggerType.GetHashCode(), (key) =>
             {
-                var riLoggers = (IReflectInsight[])null;
-                var bindings = BindingFlags.NonPublic | BindingFlags.Instance;                                            
-
-                var field = loggerType.GetField("_loggers", bindings);
-                if(field == null)
+                var riLoggers = (IReflectInsight[])null;                
+                var property = loggerType.GetProperty("Loggers"); 
+                if(property == null)
                 {
-                    field = loggerType.GetField("_logger", bindings);
+                    var bindings = BindingFlags.NonPublic | BindingFlags.Instance;
+                    var field = loggerType.GetField("_logger", bindings);
                     var innerLoger = field.GetValue(logger) as ILogger;
                     if(innerLoger != null)
                     {
