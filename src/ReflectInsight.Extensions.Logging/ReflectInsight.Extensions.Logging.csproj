@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>A ReflectInsight Logger implementation Microsoft.Extensions.Logging</Description>
-    <Copyright>Copyright 2017, ReflectSoftware</Copyright>
+    <Copyright>Copyright 2018, ReflectSoftware</Copyright>
     <AssemblyTitle>ReflectInsight.Extensions.Logging</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
     <VersionPrefix>1.1.2</VersionPrefix>
@@ -25,9 +25,9 @@
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.2</Version>
-    <AssemblyVersion>2.0.2.0</AssemblyVersion>
-    <FileVersion>2.0.2.0</FileVersion>     
+    <Version>2.0.3</Version>
+    <AssemblyVersion>2.0.3.0</AssemblyVersion>
+    <FileVersion>2.0.3.0</FileVersion>     
   </PropertyGroup>
 
   <ItemGroup>
