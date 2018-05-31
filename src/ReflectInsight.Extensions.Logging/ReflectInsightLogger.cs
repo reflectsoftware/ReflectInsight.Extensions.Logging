@@ -118,7 +118,7 @@ namespace ReflectInsight.Extensions.Logging
                 return;
             }
 
-            if (eventId.Name == "Microsoft.EntityFrameworkCore.Database.Command.CommandExecuting")
+            if ((eventId.Name ?? string.Empty).Contains("Microsoft.EntityFrameworkCore"))
             {
                 LogSqlCommand(eventId, message);
                 return;
