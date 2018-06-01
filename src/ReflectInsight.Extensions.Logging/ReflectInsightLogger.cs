@@ -52,7 +52,7 @@ namespace ReflectInsight.Extensions.Logging
             var formatter = (state as FormattedLogValues);
             var message = formatter?.ToString() ?? (state.ToString() ?? string.Empty);
             
-            if(message.IndexOf("Microsoft.EntityFrameworkCore", StringComparison.OrdinalIgnoreCase) < 0)
+            if(message.IndexOf("Microsoft.EntityFrameworkCore", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return null;
             }
