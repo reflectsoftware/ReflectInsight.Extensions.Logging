@@ -34,19 +34,15 @@ namespace Console.ReflectInsightSample
             logger.LogTrace("LogTrace with some args: {0}, {2}", 1, 2);
 
             logger.LogInformation("LogInformation with some args: {0}, {2}", 1, 2);
-            logger.LogInformation(exception, "LogInformation with exception and some args: {0}, {2}", 1, 2);
             logger.LogInformation(exception);
 
             logger.LogWarning("LogWarning with some args: {0}, {2}", 1, 2);
-            logger.LogWarning(exception, "LogWarning with exception and some args: {0}, {2}", 1, 2); ;
             logger.LogWarning(exception);
 
             logger.LogError("LogError with some args: {0}, {2}", 1, 2);
-            logger.LogError(exception, "LogError with exception and some args: {0}, {2}", 1, 2);
             logger.LogError(exception);
 
             logger.LogCritical("LogCritical with some args: {0}, {2}", 1, 2);
-            logger.LogCritical(exception, "LogCritical with exception and some args: {0}, {2}", 1, 2);
             logger.LogCritical(exception);
 
             logger.LogJSON("Test", new System.Collections.Generic.List<int> { 1, 2, 3 } );

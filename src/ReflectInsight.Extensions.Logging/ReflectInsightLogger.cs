@@ -9,6 +9,7 @@ using ReflectSoftware.Insight.Common;
 using RI.Utils.ExceptionManagement;
 using System;
 using System.Collections.Specialized;
+using System.Text;
 
 namespace ReflectInsight.Extensions.Logging
 {
@@ -50,6 +51,12 @@ namespace ReflectInsight.Extensions.Logging
         {
             var formatter = (state as FormattedLogValues);
             var message = formatter?.ToString() ?? (state.ToString() ?? string.Empty);
+            
+            if(message.IndexOf("Microsoft.EntityFrameworkCore", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return null;
+            }
+
             return GetLogger().TraceMethod(message);
         }
 
@@ -61,6 +68,32 @@ namespace ReflectInsight.Extensions.Logging
         public bool IsEnabled(LogLevel logLevel)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Logs the SQL command.
+        /// </summary>
+        /// <param name="eventId">The event identifier.</param>
+        /// <param name="message">The message.</param>
+        private void LogSqlCommand(EventId eventId, string message)
+        {
+            if (eventId.Id != 20100)
+            {
+                return;
+            }
+
+            var lines = message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var sb = new StringBuilder();
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                sb.AppendLine(lines[i]);
+            }
+
+            sb.AppendLine();
+            sb.AppendLine($"-- {lines[0]}");
+
+            GetLogger().Send(MessageType.SendSQL, "SQL Command", sb.ToString());
         }
 
         /// <summary>
@@ -85,10 +118,15 @@ namespace ReflectInsight.Extensions.Logging
                 throw new ArgumentNullException(nameof(formatter));
             }
 
-            var message = formatter(state, null);
-
+            var message = formatter(state, null);                        
             if (string.IsNullOrEmpty(message))
             {
+                return;
+            }
+
+            if ((eventId.Name ?? string.Empty).Contains("Microsoft.EntityFrameworkCore"))
+            {
+                LogSqlCommand(eventId, message);
                 return;
             }
 
@@ -126,9 +164,11 @@ namespace ReflectInsight.Extensions.Logging
                 var additional = (NameValueCollection)null;
                 if(eventId.Id > 0)
                 {
-                    additional = new NameValueCollection();
-                    additional["eventName"] = eventId.Name ?? messageType.ToString();
-                    additional["eventId"] = eventId.Id.ToString();
+                    additional = new NameValueCollection
+                    {
+                        ["eventName"] = eventId.Name ?? messageType.ToString(),
+                        ["eventId"] = eventId.Id.ToString()
+                    };
                 }
                 
                 details = ExceptionBasePublisher.ConstructIndentedMessage(exception, additional);
