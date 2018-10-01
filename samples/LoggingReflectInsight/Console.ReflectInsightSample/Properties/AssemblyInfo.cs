@@ -12,9 +12,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Console.ReflectInsightSample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Console.ReflectInsightSample")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("ReflectSoftware Inc.")]
+[assembly: AssemblyProduct("ReflectInsight.Extensions.Logging Sample")]
+[assembly: AssemblyCopyright("Copyright 2018, ReflectSoftware Inc.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

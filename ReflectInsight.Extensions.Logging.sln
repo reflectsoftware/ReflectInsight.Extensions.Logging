@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. src", "02. src", "{BFA64C32-4422-4AF9-8ECF-D2ECF2E0230B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BFA64C32-4422-4AF9-8ECF-D2ECF2E0230B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Solution Items", "01. Solution Items", "{D94023CF-59CC-4D69-B30B-991C7D52F49A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{D94023CF-59CC-4D69-B30B-991C7D52F49A}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Solution Items", "01. S
 		header\VersionInfo.cs = header\VersionInfo.cs
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03. samples", "03. samples", "{0A6739C6-1BDC-4359-9339-CAA735531E0C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{0A6739C6-1BDC-4359-9339-CAA735531E0C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReflectInsight.Extensions.Logging", "src\ReflectInsight.Extensions.Logging\ReflectInsight.Extensions.Logging.csproj", "{E1B8B885-436F-480D-851A-C466E07DD6C8}"
 EndProject
@@ -49,5 +49,8 @@ Global
 		{E1B8B885-436F-480D-851A-C466E07DD6C8} = {BFA64C32-4422-4AF9-8ECF-D2ECF2E0230B}
 		{77B97056-6AFC-4450-93AE-9DA1664C5FFB} = {0A6739C6-1BDC-4359-9339-CAA735531E0C}
 		{390BA242-1AE3-4E7B-9E55-21AE86E17458} = {0A6739C6-1BDC-4359-9339-CAA735531E0C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DD14300-E114-4CA6-A2E3-2A9775B282DF}
 	EndGlobalSection
 EndGlobal
