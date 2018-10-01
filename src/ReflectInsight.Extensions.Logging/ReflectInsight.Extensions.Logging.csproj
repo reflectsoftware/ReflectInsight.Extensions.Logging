@@ -24,7 +24,7 @@
     <RepositoryUrl>git://github.com/reflectsoftware/ReflectInsight.Extensions.Logging</RepositoryUrl>
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>2.1.0</Version>
     <Company>ReflectSoftware Inc.</Company>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>     
