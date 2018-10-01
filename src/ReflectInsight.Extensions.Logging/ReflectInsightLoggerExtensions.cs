@@ -95,17 +95,16 @@ namespace ReflectInsight.Extensions.Logging
         #endregion Private
 
         #region Standard Messages
+
         /// <summary>
         /// Logs the information.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ex">The ex.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public static ILogger LogInformation(this ILogger logger, Exception ex, string message = null, params object[] args)
+        public static ILogger LogInformation(this ILogger logger, Exception ex)
         {
-            logger.LogInformation(new EventId(0), ex, message ?? ex.Message, args);
+            logger.LogInformation(new EventId(0), ex, ex.Message);
             return logger;
         }
 
@@ -114,12 +113,10 @@ namespace ReflectInsight.Extensions.Logging
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ex">The ex.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public static ILogger LogWarning(this ILogger logger, Exception ex, string message = null, params object[] args)
+        public static ILogger LogWarning(this ILogger logger, Exception ex)
         {
-            logger.LogWarning(new EventId(0), ex, message ?? ex.Message, args);
+            logger.LogWarning(new EventId(0), ex, ex.Message);
             return logger;
         }
 
@@ -128,12 +125,10 @@ namespace ReflectInsight.Extensions.Logging
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ex">The ex.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public static ILogger LogError(this ILogger logger, Exception ex, string message = null, params object[] args)
+        public static ILogger LogError(this ILogger logger, Exception ex)
         {
-            logger.LogError(new EventId(0), ex, message ?? ex.Message, args);
+            logger.LogError(new EventId(0), ex, ex.Message);
             return logger;
         }
 
@@ -142,14 +137,13 @@ namespace ReflectInsight.Extensions.Logging
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ex">The ex.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public static ILogger LogCritical(this ILogger logger, Exception ex, string message = null, params object[] args)
+        public static ILogger LogCritical(this ILogger logger, Exception ex)
         {
-            logger.LogCritical(new EventId(0), ex, message ?? ex.Message, args);
+            logger.LogCritical(new EventId(0), ex, ex.Message);
             return logger;
         }
+
         #endregion Standard Messages
 
         #region ReflectInsight Specific Methods
